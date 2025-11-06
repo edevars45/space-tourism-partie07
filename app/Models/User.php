@@ -6,8 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;     // J'utilise la facto
 use Illuminate\Foundation\Auth\User as Authenticatable;    // Je base mon modèle sur Authenticatable
 use Illuminate\Notifications\Notifiable;                   // J'active les notifications
 use Spatie\Permission\Traits\HasRoles;                     // J'ajoute le trait Spatie pour RBAC
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasRoles;                  // J'active HasRoles ici

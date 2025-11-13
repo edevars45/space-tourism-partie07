@@ -11,10 +11,10 @@
 return [
 
     // Main menu
-    'home'         => '00 Home',
-    'crew'         => '01 Crew',
-    'destinations' => '02 Destinations',
-    'technology'   => '03 Technology',
+    'home'         => ' Home',
+    'crew'         => ' Crew',
+    'destinations' => ' Destinations',
+    'technology'   => ' Technology',
 
     // Other optional labels
     'login'        => 'Login',

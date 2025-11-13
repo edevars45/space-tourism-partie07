@@ -1,0 +1,38 @@
+[
+  {
+    "order": 1,
+    "role": "Commandant",
+    "name": "Douglas Hurley",
+    "slug": "douglas-hurley",
+    "bio": "Douglas Gerald Hurley est un ingénieur et ancien astronaute.",
+    "image_path": "crew/douglas-hurley.png",
+    "published": true
+  },
+  {
+    "order": 2,
+    "role": "Pilote",
+    "name": "Victor Glover",
+    "slug": "victor-glover",
+    "bio": "Pilote d’essai et astronaute de la NASA.",
+    "image_path": "crew/victor-glover.png",
+    "published": true
+  },
+  {
+    "order": 3,
+    "role": "Spécialiste de mission",
+    "name": "Mark Shuttleworth",
+    "slug": "mark-shuttleworth",
+    "bio": "Entrepreneur sud-africain et premier touriste spatial africain.",
+    "image_path": "crew/mark-shuttleworth.png",
+    "published": true
+  },
+  {
+    "order": 4,
+    "role": "Ingénieure",
+    "name": "Anousheh Ansari",
+    "slug": "anousheh-ansari",
+    "bio": "Ingénieure et première femme touriste spatiale.",
+    "image_path": "crew/anousheh-ansari.png",
+    "published": true
+  }
+]

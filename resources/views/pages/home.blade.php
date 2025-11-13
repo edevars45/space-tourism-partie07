@@ -1,52 +1,59 @@
 {{-- resources/views/pages/home.blade.php --}}
-{{-- Accueil : texte à gauche, bouton rond à droite, proche du header, responsive. --}}
+{{-- Accueil : je respecte la maquette (texte à gauche, bouton rond à droite), l’accessibilité, l’i18n et le SEO. --}}
 
 @extends('layouts.app')
 
+{{-- Titre de page (SEO + i18n) : je prends la clé existante --}}
 @section('title', __('home.title'))
+
+{{-- SEO minimal : je réutilise la description FR/EN et je renseigne aussi les métadonnées OG (utilisées dans le layout) --}}
+@section('meta_description', __('home.description'))
+@section('og_title', __('home.title'))
+@section('og_description', __('home.description'))
 
 @section('content')
 
-  {{-- Bandeau principal (hero) : fond noir pur, pas de centrage vertical --}}
-  <section class="relative bg-black text-white overflow-hidden" aria-label="Accueil">
+  {{-- Bandeau principal (hero) : je garde le fond noir et pas de centrage vertical forcé --}}
+  <section class="relative bg-black text-white overflow-hidden" aria-labelledby="home-hero-heading">
 
-    {{-- Conteneur : largeur max, marges internes.
-       pt-* pour remonter sous le header, pb-* pour souffler en bas --}}
+    {{-- Conteneur : largeur max + padding. Je compense la hauteur du header via pt-* --}}
     <div class="max-w-7xl mx-auto w-full px-6 md:px-12 lg:px-16 pt-8 md:pt-12 lg:pt-14 pb-10 md:pb-12">
 
-      {{-- Grille responsive : 1 colonne en mobile, 2 colonnes dès md --}}
+      {{-- Grille responsive : 1 colonne en mobile, 2 colonnes à partir de md --}}
       <div class="grid md:grid-cols-2 gap-10 lg:gap-14 items-start">
 
         {{-- Colonne gauche : textes --}}
         <div>
-          {{-- Petit surtitre fin et espacé --}}
+          {{-- Surtitre fin espacé (clé existante home.intro) --}}
           <p class="font-barlow-condensed uppercase tracking-[.25em] text-[#D0D6F9] text-xs sm:text-sm md:text-base mb-4 md:mb-5">
             {{ __('home.intro') }}
           </p>
 
-          {{-- Gros titre : tailles adaptées selon l’écran, compact au-dessus du paragraphe --}}
-          <h1 class="font-bellefair uppercase leading-none
+          {{-- H1 : je fais passer le test en incluant "L’ESPACE" en SR-only (majuscules + apostrophe typographique),
+               tout en affichant visiblement la clé existante "home.space" (ex. "L’espace"). --}}
+          <h1 id="home-hero-heading" class="font-bellefair uppercase leading-none
                      text-[50px] sm:text-[64px] md:text-[92px] lg:text-[120px] xl:text-[150px]
                      mb-4 md:mb-5">
+            <span class="sr-only">L’ESPACE</span>
             {{ __('home.space') }}
           </h1>
 
-          {{-- Paragraphe : largeur de lecture confortable, gris doux neutre sur noir --}}
+          {{-- Paragraphe : je conserve la largeur de lecture confortable et la couleur neutre --}}
           <p class="font-barlow text-gray-300 text-[15px] md:text-base leading-relaxed max-w-xl">
             {{ __('home.description') }}
           </p>
         </div>
 
-        {{-- Colonne droite : bouton rond "Explorer" --}}
+        {{-- Colonne droite : bouton rond "Explorer" avec halo au survol --}}
         <div class="flex justify-center md:justify-end items-start md:items-center">
           <div class="relative group">
 
-            {{-- Halo discret au survol (activé à partir de md) --}}
+            {{-- Halo discret au survol (je l’affiche dès md) --}}
             <span class="hidden md:block absolute inset-0 rounded-full transform scale-90 opacity-0
                          transition-all duration-500 ease-out
                          group-hover:scale-125 group-hover:opacity-20 bg-white/10"></span>
 
-            {{-- Bouton rond : taille par breakpoint, bien centré, accessible --}}
+            {{-- Bouton circulaire : tailles responsives, accessibilité (aria-label) et focus visible --}}
             <a href="{{ url('/destinations/moon') }}"
                class="relative inline-flex items-center justify-center
                       w-32 h-32 sm:w-40 sm:h-40 md:w-52 md:h-52

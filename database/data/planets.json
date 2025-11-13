@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Moon",
+    "slug": "moon",
+    "order": 1,
+    "description": "Notre satellite naturel. Parfait pour une première escapade spatiale.",
+    "distance": "384 400 km",
+    "travel_time": "3 jours",
+    "image": "planets/moon.png",
+    "published": true
+  },
+  {
+    "name": "Mars",
+    "slug": "mars",
+    "order": 2,
+    "description": "La planète rouge. Objectif historique de l'exploration humaine.",
+    "distance": "225 millions km",
+    "travel_time": "9 mois",
+    "image": "planets/mars.png",
+    "published": true
+  },
+  {
+    "name": "Europa",
+    "slug": "europa",
+    "order": 3,
+    "description": "Lune de Jupiter avec un océan sous-glaciaire. Cible scientifique prioritaire.",
+    "distance": "628 millions km",
+    "travel_time": "6 ans",
+    "image": "planets/europa.png",
+    "published": true
+  },
+  {
+    "name": "Titan",
+    "slug": "titan",
+    "order": 4,
+    "description": "Lune de Saturne à l'atmosphère dense et aux lacs d'hydrocarbures.",
+    "distance": "1,4 milliards km",
+    "travel_time": "7 ans",
+    "image": "planets/titan.png",
+    "published": true
+  }
+]

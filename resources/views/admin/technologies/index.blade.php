@@ -8,10 +8,10 @@
 @section('content')
 
 {{-- DEBUG TEMP – à retirer après test --}}
-<div class="mb-4 text-xs text-gray-400">
+<!-- <div class="mb-4 text-xs text-gray-400">
     DB: {{ config('database.connections.sqlite.database') }} <br>
     Count: {{ \App\Models\Technology::count() }}
-</div>
+</div> -->
 
 <section class="max-w-6xl mx-auto px-6 py-8">
     {{-- Titre + Bouton créer --}}

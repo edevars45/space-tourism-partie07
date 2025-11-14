@@ -71,7 +71,7 @@ Route::get('/lang/{locale}', function (string $locale) {
 */
 Route::prefix('admin')
     ->name('admin.')
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth', ])
     ->group(function () {
 
         // Utilisateurs — réservé aux Administrateurs

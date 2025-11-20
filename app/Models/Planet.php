@@ -6,8 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class Planet extends Model
 {
+    protected $table = 'planets';
+
     protected $fillable = [
-        'name','slug','order','description','distance','travel_time','image','published',
+        'name',
+        'name_en',
+        'slug',
+        'order',
+        'distance',
+        'travel_time',
+        'description',
+        'description_en',
+        'image',        // chemin de l'image (ex : planets/xxx.png)
+        'published',    // bool
     ];
 
     protected $casts = [

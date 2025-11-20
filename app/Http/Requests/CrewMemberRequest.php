@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class CrewMemberRequest extends FormRequest
 {
@@ -14,26 +13,32 @@ class CrewMemberRequest extends FormRequest
 
     public function rules(): array
     {
-        $memberId = $this->route('crew')?->id; // paramètre {crew}
-
         return [
-            'name'       => ['required', 'string', 'max:255'],
-            'slug'       => [
-                'nullable', 'string', 'max:255', 'alpha_dash',
-                Rule::unique('crew_members', 'slug')->ignore($memberId),
-            ],
-            'role'       => ['required', 'string', 'max:255'],
-            'order'      => ['nullable', 'integer', 'min:0'],
-            'bio'        => ['nullable', 'string'],
-            'published'  => ['sometimes', 'boolean'],
+            'name'         => ['required', 'string', 'max:100'],
+            'slug'         => ['nullable', 'string', 'max:120'],
 
-            // Si tu gères l’upload (ton contrôleur le fait) :
-            'image'      => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            // FR
+            'role'         => ['required', 'string', 'max:100'],
+            'bio'          => ['nullable', 'string'],
+
+            // EN
+            'role_en'      => ['nullable', 'string', 'max:100'],
+            'bio_en'       => ['nullable', 'string'],
+
+            'order'        => ['nullable', 'integer', 'min:0'],
+
+            // IMPORTANT : même nom que la colonne ET que le champ du form
+            'is_published' => ['sometimes', 'boolean'],
+
+            'image'        => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ];
     }
 
-    public function prepareForValidation(): void
+    // ⭐ ICI : le merge dont on parlait
+    protected function prepareForValidation(): void
     {
-        $this->merge(['published' => (bool) $this->boolean('published')]);
+        $this->merge([
+            'is_published' => (bool) $this->boolean('is_published'),
+        ]);
     }
 }

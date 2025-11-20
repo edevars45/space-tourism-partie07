@@ -1,15 +1,18 @@
 {{-- resources/views/components/header.blade.php --}}
 @props(['links' => [
-    ['route' => 'home',               'label' => __('nav.home'),         'num' => '00'],
-    ['route' => 'crew',               'label' => __('nav.crew'),         'num' => '01'],
-    ['route' => 'destinations.show',  'params' => ['planet' => 'moon'],  'label' => __('nav.destinations'), 'num' => '02'],
-    ['route' => 'technology',         'label' => __('nav.technology'),   'num' => '03'],
+    ['route' => 'home',          'label' => __('nav.home'),         'num' => '00'],
+    ['route' => 'crew',          'label' => __('nav.crew'),         'num' => '01'],
+
+    // 👇 ICI : on utilise maintenant la route "destinations" + paramètre slug
+    ['route' => 'destinations',  'params' => ['slug' => 'moon'],  'label' => __('nav.destinations'), 'num' => '02'],
+
+    ['route' => 'technology',    'label' => __('nav.technology'),   'num' => '03'],
 ]])
 
 <header class="w-full fixed top-0 left-0 right-0 z-50 bg-transparent">
   <div class="max-w-7xl mx-auto flex items-center gap-4 px-6 md:px-10 lg:px-16 py-5">
 
-    {{-- Logo (assure-toi d’avoir /public/images/logo.svg) --}}
+    {{-- Logo --}}
     <a href="{{ route('home') }}" class="shrink-0" aria-label="Space Tourism">
       <img src="{{ asset('images/logo.jpg') }}" alt="Logo" class="h-10 w-10">
     </a>
@@ -24,6 +27,9 @@
           @php
             $route  = $item['route'];
             $params = $item['params'] ?? [];
+
+            // Actif si le nom de route correspond
+            // OU si l’URL actuelle == route($route, $params)
             $active = request()->routeIs($route)
                       || (count($params) && url()->current() === route($route, $params));
           @endphp
@@ -52,7 +58,6 @@
             class="md:hidden ml-auto inline-flex items-center justify-center h-10 w-10 rounded
                    text-white/90 hover:text-white focus:outline-none focus:ring-2 focus:ring-white/40"
             aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobile-menu">
-      {{-- icône burger simple --}}
       <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M4 6h16M4 12h16M4 18h16"/>
@@ -112,7 +117,7 @@
   </nav>
 </header>
 
-{{-- JS minimal pour ouvrir/fermer le burger (pas d’alpine requis) --}}
+{{-- JS burger --}}
 <script>
   (function () {
     const toggle = document.getElementById('nav-toggle');
@@ -138,7 +143,6 @@
     closeBtn && closeBtn.addEventListener('click', closeMenu);
     overlay && overlay.addEventListener('click', closeMenu);
 
-    // Échappement clavier
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') closeMenu();
     });

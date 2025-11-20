@@ -11,7 +11,15 @@ class CrewMember extends Model
 
     // Je sécurise l’assignation massive
     protected $fillable = [
-        'name', 'slug', 'role', 'bio', 'image_path', 'is_published'
+        'name',
+        'slug',
+        'role',
+        'bio',
+        'role_en',
+        'bio_en',
+        'order',
+        'is_published',
+        'image_path',
     ];
 
     protected $casts = [

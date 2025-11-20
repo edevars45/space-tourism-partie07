@@ -9,36 +9,33 @@ class PlanetRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true; // l’accès est géré par tes middlewares/permissions
+        return true; // tu gères l'accès avec tes middlewares
     }
 
     public function rules(): array
     {
-        // En édition, on a un modèle {planet} dans la route
-        $planetId = $this->route('planet')?->id;
-
         return [
-            'name'        => ['required', 'string', 'max:255'],
-            'slug'        => [
-                'nullable', 'string', 'max:255', 'alpha_dash',
-                Rule::unique('planets', 'slug')->ignore($planetId)
-            ],
-            'order'       => ['nullable', 'integer', 'min:0'],
+            'name' => ['required', 'string', 'max:100'],
+            'name_en' => ['nullable', 'string', 'max:100'],   // 👈 OBLIGATOIRE
+            'slug' => ['nullable', 'string', 'max:120', Rule::unique('planets', 'slug')->ignore($this->planet)],
+            'order' => ['nullable', 'integer', 'min:0'],
             'description' => ['nullable', 'string'],
-            'distance'    => ['nullable', 'string', 'max:255'],
-            'travel_time' => ['nullable', 'string', 'max:255'],
-            'image'       => ['nullable', 'string', 'max:255'], // chemin d'image (texte)
-            'published'   => ['sometimes', 'boolean'],
+            'description_en' => ['nullable', 'string'],
+            'distance' => ['nullable', 'string', 'max:100'],
+            'travel_time' => ['nullable', 'string', 'max:100'],
+            'published' => ['sometimes', 'boolean'],
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ];
     }
 
-    public function prepareForValidation(): void
+    protected function prepareForValidation(): void
     {
-        // Sécurise la case à cocher publiée
         $this->merge([
             'published' => (bool) $this->boolean('published'),
         ]);
     }
+
+
 
     public function messages(): array
     {

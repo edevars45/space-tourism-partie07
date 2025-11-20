@@ -1,15 +1,22 @@
-@extends('layouts.admin')
+{{-- resources/views/admin/technologies/edit.blade.php --}}
+@extends('layouts.app') {{-- ou layouts.admin --}}
 
-@section('title', 'Éditer une technologie')
+@section('title', 'Modifier une technologie')
 
 @section('content')
-<section class="max-w-3xl mx-auto px-6 py-8">
-  <h1 class="text-2xl font-bold mb-6">Éditer : {{ $technology->name }}</h1>
+    <div class="max-w-3xl mx-auto py-8">
+        <h1 class="text-2xl font-semibold mb-6">
+            Modifier la technologie : {{ $technology->name }}
+        </h1>
 
-  @include('admin.technologies._form', [
-    'technology'  => $technology,
-    'method'      => 'PUT',
-    'submitLabel' => 'Mettre à jour'
-  ])
-</section>
+        <form method="POST"
+              action="{{ route('admin.technologies.update', $technology) }}"
+              enctype="multipart/form-data">
+            @method('PUT')
+
+            @include('admin.technologies._form', [
+                'technology' => $technology,
+            ])
+        </form>
+    </div>
 @endsection

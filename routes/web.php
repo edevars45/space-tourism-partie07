@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
 
-// Pages publiques (maquette)
+// Pages publiques
 use App\Http\Controllers\DestinationsController;
 use App\Http\Controllers\PublicCrewController;
 
@@ -22,17 +22,18 @@ use App\Http\Controllers\Admin\CrewMemberController;
 | 1) Pages publiques (accès libre)
 |--------------------------------------------------------------------------
 */
+
+// Page d’accueil
 Route::view('/', 'pages.home')->name('home');
 
-// Destinations
-Route::redirect('/destinations', '/destinations/moon')->name('destinations');
-Route::get('/destinations/{planet?}', [DestinationsController::class, 'show'])
-    ->name('destinations.show');
+// Destinations : slug optionnel, contrôleur = index()
+Route::get('/destinations/{slug?}', [DestinationsController::class, 'index'])
+    ->name('destinations');
 
 // Équipage public (fallback i18n si BDD vide)
 Route::get('/crew', [PublicCrewController::class, 'index'])->name('crew');
 
-// Technologies publiques (page maquette)
+// Technologies publiques (pour l’instant simple vue maquette)
 Route::view('/technology', 'pages.technology')->name('technology');
 
 /*
@@ -65,13 +66,14 @@ Route::get('/lang/{locale}', function (string $locale) {
 
 /*
 |--------------------------------------------------------------------------
-| 4) Back-office — auth + verified + rôles/permissions
+| 4) Back-office — auth + rôles/permissions
+|    Noms générés :
+|    admin.users.*, admin.technologies.*, admin.planets.*, admin.crew.*
 |--------------------------------------------------------------------------
-| Noms générés automatiquement : admin.users.*, admin.technologies.*, admin.planets.*, admin.crew.*
 */
 Route::prefix('admin')
     ->name('admin.')
-    ->middleware(['auth', ])
+    ->middleware(['auth'])
     ->group(function () {
 
         // Utilisateurs — réservé aux Administrateurs

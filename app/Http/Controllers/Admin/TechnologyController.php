@@ -1,101 +1,79 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\TechnologyRequest;
-use App\Models\Technology;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Schema;
+use App\Models\Technology;   // 👈 modèle des technologies
 
 class TechnologyController extends Controller
 {
-    // Liste paginée
-    public function index()
+    public function index(Request $request)
     {
-        $items = Technology::latest()->paginate(12);
-        return view('admin.technologies.index', compact('items'));
-    }
+        $items  = [];
+        $locale = App::getLocale();
 
-    // Formulaire de création
-    public function create()
-    {
-        return view('admin.technologies.create', [
-            'technology' => new Technology(),
-        ]);
-    }
+        // --- Requête BDD ---
+        $query = Technology::query()
+            ->where('is_published', true);
 
-    // Enregistrement
-    public function store(TechnologyRequest $request)
-    {
-        $data = $request->validated();
+        $table = (new Technology)->getTable();
 
-        // Slug
-        $data['slug'] = !empty($data['slug'])
-            ? Str::slug($data['slug'])
-            : Str::slug($data['name']);
-
-        // Image
-        if ($request->hasFile('image')) {
-            $data['image_path'] = $request->file('image')->store('technologies', 'public');
+        if (Schema::hasColumn($table, 'order')) {
+            $query->orderBy('order');
         }
 
-        // Publication par défaut
-        $data['is_published'] = (bool)($data['is_published'] ?? true);
+        $query->orderBy('id');
 
-        Technology::create($data);
+        $rows = $query->get();
 
-        return redirect()
-            ->route('admin.technologies.index')
-            ->with('success', 'Technologie créée.');
-    }
+        if ($rows->isNotEmpty()) {
+            foreach ($rows as $row) {
 
-    // Formulaire d’édition
-    public function edit(Technology $technology)
-    {
-        // ⚠️ Vue dans le dossier "technologies" (pluriel)
-        return view('admin.technologies.edit', compact('technology'));
-    }
+                $name        = $row->name;
+                $description = $row->description;
 
-    // Mise à jour
-    public function update(TechnologyRequest $request, Technology $technology)
-    {
-        $data = $request->validated();
+                if ($locale === 'en') {
+                    $name        = $row->name_en        ?: $row->name;
+                    $description = $row->description_en ?: $row->description;
+                }
 
-        // Slug
-        $data['slug'] = !empty($data['slug'])
-            ? Str::slug($data['slug'])
-            : Str::slug($data['name']);
+                // image_path ou image simple
+                $path = $row->image_path
+                    ? str_replace('\\', '/', $row->image_path)
+                    : $row->image;
 
-        // Image
-        if ($request->hasFile('image')) {
-            if ($technology->image_path) {
-                Storage::disk('public')->delete($technology->image_path);
+                $items[] = [
+                    'name'        => $name,
+                    'description' => $description,
+                    'image'       => $path ? asset($path) : null,
+                    'slug'        => $row->slug,
+                ];
             }
-            $data['image_path'] = $request->file('image')->store('technologies', 'public');
+        } else {
+            // --- FALLBACK fichiers de langue (optionnel) ---
+            $trans = __('technology.items');
+
+            if (is_array($trans) && !empty($trans)) {
+                foreach ($trans as $slug => $t) {
+                    $items[] = [
+                        'name'        => Arr::get($t, 'name', ''),
+                        'description' => Arr::get($t, 'description', ''),
+                        'image'       => Arr::get($t, 'image')
+                            ? asset(Arr::get($t, 'image'))
+                            : null,
+                        'slug'        => $slug,
+                    ];
+                }
+            }
         }
 
-        // Conserver la publication si non envoyé
-        $data['is_published'] = (bool)($data['is_published'] ?? $technology->is_published);
-
-        $technology->update($data);
-
-        return redirect()
-            ->route('admin.technologies.index')
-            ->with('success', 'Technologie mise à jour.');
-    }
-
-    // Suppression
-    public function destroy(Technology $technology)
-    {
-        if ($technology->image_path) {
-            Storage::disk('public')->delete($technology->image_path);
-        }
-
-        $technology->delete();
-
-        return redirect()
-            ->route('admin.technologies.index')
-            ->with('success', 'Technologie supprimée.');
+        return view('pages.technology', [
+            'technologies' => $items,
+            'pageTitle'    => __('technology.title'),
+            'heading'      => __('technology.heading'),
+        ]);
     }
 }

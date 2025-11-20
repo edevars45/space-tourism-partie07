@@ -2,52 +2,62 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Planet;
+use Illuminate\Support\Facades\Schema;
 
 class DestinationsController extends Controller
 {
-    // Je choisis un ordre d’onglets fixe, identique FR/EN.
-    private array $order = ['moon','mars','europa','titan'];
-
     /**
-     * Page /destinations/{planet?}
-     * - Je lis les données dans les fichiers de langue (FR/EN).
-     * - Je valide le slug et je fournis à la vue : slug courant, data, liste.
+     * Page des destinations.
+     *
+     * @param  string|null  $slug  Slug de la planète courante (moon, mars, europa, titan, etc.)
      */
-    public function show(Request $request, string $planet = 'moon')
+    public function index(?string $slug = null)
     {
-        // 1) Je récupère les données traduites
-        $all = __('destinations.planets');   // tableau associatif
-        if (!is_array($all) || empty($all)) {
-            abort(500, 'Missing i18n data for destinations.');
+        $planetModel = new Planet();
+        $table = $planetModel->getTable();
+
+        // 1) Préparation de la requête
+        $query = Planet::query();
+
+        // Colonne de publication : "published" ou "is_published"
+        if (Schema::hasColumn($table, 'published')) {
+            $query->where('published', true);
+        } elseif (Schema::hasColumn($table, 'is_published')) {
+            $query->where('is_published', true);
         }
 
-        // 2) Je nettoie l’ordre en fonction des clés réellement présentes
-        $planets = [];
-        foreach ($this->order as $slug) {
-            if (isset($all[$slug])) {
-                $planets[$slug] = $all[$slug];
-            }
-        }
-        // Si jamais des clés supplémentaires existent, je les ajoute en fin
-        foreach ($all as $slug => $data) {
-            if (!isset($planets[$slug])) {
-                $planets[$slug] = $data;
-            }
+        // Tri par "order" si la colonne existe, sinon par id
+        if (Schema::hasColumn($table, 'order')) {
+            $query->orderBy('order');
+        } else {
+            $query->orderBy('id');
         }
 
-        // 3) Validation du slug
-        if (!array_key_exists($planet, $planets)) {
-            $planet = array_key_first($planets); // fallback moon
+        // 2) Récupération de toutes les planètes publiées
+        $planets = $query->get();
+
+        // Si aucune planète : on envoie une vue vide
+        if ($planets->isEmpty()) {
+            return view('pages.destinations', [
+                'planets' => collect(),
+                'planet'  => null,
+            ]);
         }
 
-        // 4) Données pour la vue
-        $data = $planets[$planet];
+        // 3) Planète courante
+        if ($slug) {
+            // On essaye de trouver la planète correspondant au slug
+            $planet = $planets->firstWhere('slug', $slug) ?? $planets->first();
+        } else {
+            // Pas de slug → première planète
+            $planet = $planets->first();
+        }
 
+        // 4) Envoi à la vue
         return view('pages.destinations', [
-            'planet'  => $planet,
-            'data'    => $data,
-            'planets' => $planets, // pour construire les onglets
+            'planets' => $planets,   // collection de Planet
+            'planet'  => $planet,    // planète courante
         ]);
     }
 }

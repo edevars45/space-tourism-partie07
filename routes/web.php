@@ -7,13 +7,14 @@ use Illuminate\Support\Facades\Session;
 // Pages publiques
 use App\Http\Controllers\DestinationsController;
 use App\Http\Controllers\PublicCrewController;
-
-// Espace authentifié (Breeze)
 use App\Http\Controllers\ProfileController;
+
+// Technologies publiques (page 03)
+use App\Http\Controllers\TechnologyController as PublicTechnologyController;
 
 // Back-office (Partie 07)
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Admin\TechnologyController;
+use App\Http\Controllers\Admin\TechnologyController as AdminTechnologyController;
 use App\Http\Controllers\Admin\PlanetController;
 use App\Http\Controllers\Admin\CrewMemberController;
 
@@ -31,10 +32,12 @@ Route::get('/destinations/{slug?}', [DestinationsController::class, 'index'])
     ->name('destinations');
 
 // Équipage public (fallback i18n si BDD vide)
-Route::get('/crew', [PublicCrewController::class, 'index'])->name('crew');
+Route::get('/crew', [PublicCrewController::class, 'index'])
+    ->name('crew');
 
-// Technologies publiques (pour l’instant simple vue maquette)
-Route::view('/technology', 'pages.technology')->name('technology');
+// Technologies publiques : on passe maintenant par le contrôleur public
+Route::get('/technology', [PublicTechnologyController::class, 'index'])
+    ->name('technology');
 
 /*
 |--------------------------------------------------------------------------
@@ -46,7 +49,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/profile',  [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile',[ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 // Auth routes (login/register/verify/etc.)
@@ -58,9 +61,11 @@ require __DIR__.'/auth.php';
 |--------------------------------------------------------------------------
 */
 Route::get('/lang/{locale}', function (string $locale) {
-    abort_unless(in_array($locale, ['fr','en']), 404);
+    abort_unless(in_array($locale, ['fr', 'en']), 404);
+
     Session::put('locale', $locale);
     App::setLocale($locale);
+
     return back();
 })->name('lang.switch');
 
@@ -83,13 +88,8 @@ Route::prefix('admin')
 
         // Technologies — permission:technologies.manage
         Route::middleware(['permission:technologies.manage'])->group(function () {
-            Route::resource('technologies', TechnologyController::class)->except(['show']);
-
-            // Actions additionnelles
-            Route::post('technologies/{technology}/move-up',   [TechnologyController::class, 'moveUp'])->name('technologies.moveUp');
-            Route::post('technologies/{technology}/move-down', [TechnologyController::class, 'moveDown'])->name('technologies.moveDown');
-            Route::post('technologies/bulk',                   [TechnologyController::class, 'bulk'])->name('technologies.bulk');
-            Route::post('technologies/reorder',                [TechnologyController::class, 'reorder'])->name('technologies.reorder');
+            Route::resource('technologies', AdminTechnologyController::class)
+                ->except(['show']);
         });
 
         // Planètes — permission:planets.manage

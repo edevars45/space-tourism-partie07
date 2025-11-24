@@ -1,5 +1,4 @@
-{{-- resources/views/admin/technologies/edit.blade.php --}}
-@extends('layouts.app') {{-- ou layouts.admin --}}
+@extends('layouts.admin')
 
 @section('title', 'Modifier une technologie')
 
@@ -12,10 +11,12 @@
         <form method="POST"
               action="{{ route('admin.technologies.update', $technology) }}"
               enctype="multipart/form-data">
+            @csrf
             @method('PUT')
 
             @include('admin.technologies._form', [
-                'technology' => $technology,
+                'technology'   => $technology,
+                'submitLabel'  => 'Mettre à jour',
             ])
         </form>
     </div>

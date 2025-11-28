@@ -102,7 +102,7 @@ unset($__defined_vars, $__key, $__value); ?>
     <div class="hidden md:flex ml-2">
       <?php if(auth()->guard()->check()): ?>
         
-        <a href="<?php echo e(route('dashboard')); ?>"
+        <a href="<?php echo e(url('/admin/users')); ?>"
            class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-black bg-white rounded hover:bg-gray-200 transition-colors">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -192,7 +192,8 @@ unset($__defined_vars, $__key, $__value); ?>
       <li class="mt-2 border-t border-white/10"></li>
       <li class="px-4 pt-3">
         <?php if(auth()->guard()->check()): ?>
-          <a href="<?php echo e(route('dashboard')); ?>"
+          
+          <a href="<?php echo e(url('/admin/users')); ?>"
              class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-black bg-white rounded hover:bg-gray-200 transition-colors w-full justify-center">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -203,6 +204,7 @@ unset($__defined_vars, $__key, $__value); ?>
             Admin
           </a>
         <?php else: ?>
+          
           <a href="<?php echo e(route('login')); ?>"
              class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-black bg-white rounded hover:bg-gray-200 transition-colors w-full justify-center">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
